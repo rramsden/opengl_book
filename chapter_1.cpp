@@ -16,7 +16,7 @@ using namespace std;
 
 void Initialize(int, char*[]);
 void InitWindow(int, char*[]);
-void ResizeFunction();
+void ResizeFunction(int, int);
 void RenderFunction();
 
 static void ErrorCallback(int /* error */, const char* description) {
@@ -28,14 +28,17 @@ static void KeyCallback(GLFWwindow* window, int key, int /* scancode */, int act
         glfwSetWindowShouldClose(window, GL_TRUE);
 }
 
+static void WindowSizeCallback(GLFWwindow* window, int width, int height) {
+  ResizeFunction(width, height);
+}
+
 int main(int argc, char *argv[]) {
   Initialize(argc, argv);
 
   while (!glfwWindowShouldClose(window))
   {
-    ResizeFunction();
     RenderFunction();
-    glfwPollEvents(); // process callbacks
+    glfwPollEvents();
   }
 
   glfwDestroyWindow(window);
@@ -50,8 +53,9 @@ void RenderFunction() {
   glfwSwapBuffers(window);
 }
 
-void ResizeFunction() {
-  glViewport(0, 0, WIDTH, HEIGHT);
+void ResizeFunction(int width, int height) {
+  cout << "Resize Viewport: " << width << ", " << height << endl;
+  glViewport(0, 0, width, height);
 }
 
 void Initialize(int argc, char* argv[]) {
@@ -61,6 +65,9 @@ void Initialize(int argc, char* argv[]) {
   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
   InitWindow(argc, argv);
+  ResizeFunction(WIDTH, HEIGHT);
+
+  glfwSetWindowSizeCallback(window, WindowSizeCallback);
   
   cout << 
     "INFO: GL_RENDERER: " << glGetString(GL_RENDERER) << "\n" << 
