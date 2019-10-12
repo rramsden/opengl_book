@@ -1,6 +1,8 @@
 #define GL_SILENCE_DEPRECATION
 
 #include <iostream>
+
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <stdlib.h>
@@ -50,6 +52,8 @@ int main(int argc, char *argv[]) {
 void RenderFunction() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+  /* Draw something on back buffer here */
+
   glfwSwapBuffers(window);
 }
 
@@ -59,12 +63,12 @@ void ResizeFunction(int width, int height) {
 }
 
 void Initialize(int argc, char* argv[]) {
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+  GLenum GlewInitResult;
 
   InitWindow(argc, argv);
+
+  GlewInitResult = glewInit();
+
   ResizeFunction(WIDTH, HEIGHT);
 
   glfwSetWindowSizeCallback(window, WindowSizeCallback);
@@ -80,6 +84,11 @@ void InitWindow(int argc, char* argv[]) {
 
   if (!glfwInit())
       exit(EXIT_FAILURE);
+
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
   window = glfwCreateWindow(WIDTH, HEIGHT, WINDOW_TITLE, NULL, NULL);
 
