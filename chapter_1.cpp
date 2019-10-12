@@ -1,17 +1,21 @@
 #define GL_SILENCE_DEPRECATION
 
+#include <iostream>
 #include <GLFW/glfw3.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 
-#define WIDTH 640
-#define HEIGHT 480
+#define WIDTH 800
+#define HEIGHT 600
 #define WINDOW_TITLE "Chapter 1"
 
 GLFWwindow* window;
 
+using namespace std;
+
 void Initialize(int, char*[]);
+void InitWindow(int, char*[]);
 void ResizeFunction();
 void RenderFunction();
 
@@ -31,9 +35,7 @@ int main(int argc, char *argv[]) {
   {
     ResizeFunction();
     RenderFunction();
-
-    // Process callbacks
-    glfwPollEvents();
+    glfwPollEvents(); // process callbacks
   }
 
   glfwDestroyWindow(window);
@@ -43,49 +45,43 @@ int main(int argc, char *argv[]) {
 }
 
 void RenderFunction() {
-  float ratio = WIDTH / (float) HEIGHT;
-
   glClear(GL_COLOR_BUFFER_BIT);
-
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
-  glOrtho(-ratio, ratio, -1.f, 1.f, 1.f, -1.f);
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  glRotatef((float) glfwGetTime() * 50.f, 0.f, 0.f, 1.f);
-
-  glBegin(GL_TRIANGLES);
-    glColor3f(1.f, 0.f, 0.f);
-    glVertex3f(-0.6f, -0.4f, 0.f);
-    glColor3f(0.f, 1.f, 0.f);
-    glVertex3f(0.6f, -0.4f, 0.f);
-    glColor3f(0.f, 0.f, 1.f);
-    glVertex3f(0.f, 0.6f, 0.f);
-  glEnd();
-
+  glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
   glfwSwapBuffers(window);
 }
 
 void ResizeFunction() {
-  int width, height;
-  glfwGetFramebufferSize(window, &width, &height);
-  glViewport(0, 0, width, height);
+  glViewport(0, 0, WIDTH, HEIGHT);
 }
 
 void Initialize(int argc, char* argv[]) {
-    glfwSetErrorCallback(ErrorCallback);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    if (!glfwInit())
-        exit(EXIT_FAILURE);
+  InitWindow(argc, argv);
+  
+  cout << 
+    "INFO: GL_RENDERER: " << glGetString(GL_RENDERER) << "\n" << 
+    "      GL_VENDOR:   " << glGetString(GL_VENDOR) << "\n" <<
+    "      GL_VERSION:  " << glGetString(GL_VERSION) << endl;
+}
 
-    window = glfwCreateWindow(WIDTH, HEIGHT, WINDOW_TITLE, NULL, NULL);
+void InitWindow(int argc, char* argv[]) {
+  glfwSetErrorCallback(ErrorCallback);
 
-    if (!window)
-    {
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
+  if (!glfwInit())
+      exit(EXIT_FAILURE);
 
-    glfwMakeContextCurrent(window);
-    glfwSetKeyCallback(window, KeyCallback);
+  window = glfwCreateWindow(WIDTH, HEIGHT, WINDOW_TITLE, NULL, NULL);
+
+  if (!window)
+  {
+      glfwTerminate();
+      exit(EXIT_FAILURE);
+  }
+
+  glfwMakeContextCurrent(window);
+  glfwSetKeyCallback(window, KeyCallback);
 }
