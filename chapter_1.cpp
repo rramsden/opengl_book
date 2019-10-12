@@ -69,6 +69,11 @@ void Initialize(int argc, char* argv[]) {
 
   GlewInitResult = glewInit();
 
+  if (GLEW_OK != GlewInitResult) {
+    cout << "ERROR: " << glewGetErrorString(GlewInitResult) << endl;
+    exit(EXIT_FAILURE);
+  }
+
   ResizeFunction(WIDTH, HEIGHT);
 
   glfwSetWindowSizeCallback(window, WindowSizeCallback);
