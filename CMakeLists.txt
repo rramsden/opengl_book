@@ -27,3 +27,6 @@ target_link_libraries(chapter_2.3 ${LIBRARIES})
 
 add_executable(chapter_2.4 chapter_2.4.cpp)
 target_link_libraries(chapter_2.4 ${LIBRARIES})
+
+add_executable(chapter_3 chapter_3.cpp)
+target_link_libraries(chapter_3 ${LIBRARIES})
