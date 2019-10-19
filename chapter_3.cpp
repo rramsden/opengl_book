@@ -25,7 +25,8 @@ GLuint
   VaoId,
   VboId,
   BufferId,
-  IndexBufferId;
+  IndexBufferId[2],
+  ActiveIndexBuffer = 0;
 
 void Cleanup(void);
 void CreateVBO(void);
@@ -71,6 +72,11 @@ static void ErrorCallback(int /* error */, const char* description) {
 static void KeyCallback(GLFWwindow* window, int key, int /* scancode */, int action, int /* mods */) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GL_TRUE);
+
+    if (key == GLFW_KEY_T && action == GLFW_PRESS) {
+      ActiveIndexBuffer = (ActiveIndexBuffer == 1 ? 0 : 1);
+      glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferId[ActiveIndexBuffer]);
+    }
 }
 
 static void WindowSizeCallback(GLFWwindow* window, int width, int height) {
@@ -105,7 +111,11 @@ void Cleanup(void) {
 void RenderFunction() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glDrawElements(GL_TRIANGLES, 48, GL_UNSIGNED_BYTE, (GLvoid*)0);
+  if (ActiveIndexBuffer == 0) {
+    glDrawElements(GL_TRIANGLES, 48, GL_UNSIGNED_BYTE, NULL);
+  } else {
+    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_BYTE, NULL);
+  }
 
   glfwSwapBuffers(window);
 }
@@ -209,6 +219,24 @@ void CreateVBO(void) {
     15, 16, 14
   };
 
+  GLubyte AlternativeIndices[] = {
+    // Outer square border:
+    3, 4, 16,
+    3, 15, 16,
+    15, 16, 8,
+    15, 7, 8,
+    7, 8, 12,
+    7, 11, 12,
+    11, 12, 4,
+    11, 3, 4,
+
+    // Inner square
+    0, 11, 3,
+    0, 3, 15,
+    0, 15, 7,
+    0, 7, 11
+  };
+
   GLenum ErrorCheckValue = glGetError();
   const size_t BufferSize = sizeof(Verticies);
   const size_t VertexSize = sizeof(Verticies[0]);
@@ -228,9 +256,13 @@ void CreateVBO(void) {
   glEnableVertexAttribArray(0);
   glEnableVertexAttribArray(1);
 
-  glGenBuffers(1, &IndexBufferId);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferId);
+  glGenBuffers(2, IndexBufferId);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferId[0]);
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Indices), Indices, GL_STATIC_DRAW);
+
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IndexBufferId[1]);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(AlternativeIndices), AlternativeIndices, GL_STATIC_DRAW);
 
   ErrorCheckValue = glGetError();
   if (ErrorCheckValue != GL_NO_ERROR) {
@@ -307,7 +339,7 @@ void DestroyVBO(void) {
   glDeleteBuffers(1, &VboId);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  glDeleteBuffers(1, &IndexBufferId);
+  glDeleteBuffers(2, IndexBufferId);
 
   glBindVertexArray(0);
   glDeleteVertexArrays(1, &VaoId);
