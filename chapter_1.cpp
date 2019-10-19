@@ -10,7 +10,7 @@
 
 #define WIDTH 800
 #define HEIGHT 600
-#define WINDOW_TITLE "Chapter 1"
+#define WINDOW_TITLE "Chapter 2"
 
 GLFWwindow* window;
 

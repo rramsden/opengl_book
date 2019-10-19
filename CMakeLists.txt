@@ -15,3 +15,6 @@ link_directories(/usr/local/lib)
 
 add_executable(chapter_1 chapter_1.cpp)
 target_link_libraries(chapter_1 ${LIBRARIES})
+
+add_executable(chapter_2.1 chapter_2.1.cpp)
+target_link_libraries(chapter_2.1 ${LIBRARIES})
