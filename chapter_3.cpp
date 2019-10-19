@@ -110,6 +110,7 @@ void Cleanup(void) {
 
 void RenderFunction() {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   if (ActiveIndexBuffer == 0) {
     glDrawElements(GL_TRIANGLES, 48, GL_UNSIGNED_BYTE, NULL);
