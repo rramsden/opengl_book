@@ -10,6 +10,9 @@ find_package(glew 2.1.0 REQUIRED)
 
 set(LIBRARIES GLEW glfw ${OPENGL_LIBRARY})
 
+file (GLOB HEADERS *.h )
+include_directories(${CMAKE_SOURCE_DIR})
+
 include_directories(/usr/local/include)
 link_directories(/usr/local/lib)
 
@@ -30,3 +33,6 @@ target_link_libraries(chapter_2.4 ${LIBRARIES})
 
 add_executable(chapter_3 chapter_3.cpp)
 target_link_libraries(chapter_3 ${LIBRARIES})
+
+add_executable(chapter_4 chapter_4.cpp Utils.cpp ${HEADERS})
+target_link_libraries(chapter_4 ${LIBRARIES})
